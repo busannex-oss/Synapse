@@ -1,0 +1,11 @@
+
+{
+  "app_name": "Synapse Neural HUD",
+  "category": "Business",
+  "sub_category": "Productivity",
+  "rating": "4+",
+  "localization": ["en-US", "en-GB", "ja-JP"],
+  "keywords": ["neural", "leads", "business", "prospecting", "AI", "gemini", "automation"],
+  "bundle_id": "network.synapse.core",
+  "privacy_usage_description": "Synapse requires location access for Geospatial node mapping and microphone access for the Neural Link voice interface."
+}
