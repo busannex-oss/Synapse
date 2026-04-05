@@ -4,181 +4,165 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SYNAPSE | Neural HUD Interface</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700;900&family=JetBrains+Mono:wght@300;500;800&display=swap" rel="stylesheet">
+    <title>SYNAPSE</title>
+    <meta name="theme-color" content="#111318" />
+    <meta name="description" content="Neural Market Intelligence & Autonomous Growth" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SYNAPSE" />
+    <link rel="synapse-touch-icon" href="/logo.svg" />
     <style>
       :root {
-        --hud-cyan: #00f2ff;
-        --hud-cyan-dim: rgba(0, 242, 255, 0.15);
-        --hud-amber: #ff9a00;
-        --hud-alert: #ff3d00;
-        --hud-void: #05070a;
-        --hud-border: rgba(0, 242, 255, 0.2);
+        --cyan: #00f2ff;
+        --cyan-dim: rgba(0, 242, 255, 0.1);
+        --cyan-border: rgba(0, 242, 255, 0.2);
+        --glass: rgba(17, 19, 24, 0.9);
+        --bg: #111318;
       }
       
       body {
-        font-family: 'JetBrains Mono', monospace;
-        background-color: var(--hud-void);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: var(--bg);
         color: #e2e8f0;
         overflow: hidden;
         height: 100vh;
-        /* Technical Grid Overlay */
         background-image: 
-          linear-gradient(var(--hud-cyan-dim) 1px, transparent 1px),
-          linear-gradient(90deg, var(--hud-cyan-dim) 1px, transparent 1px);
-        background-size: 40px 40px;
-        background-position: center center;
+          linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px, 40px 40px;
+        position: relative;
       }
 
-      /* Background Watermark */
-      .app-watermark {
+      /* Pulsing Grid Overlay */
+      body::before {
+        content: "";
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05), transparent 70%);
+        animation: pulse-bg 8s ease-in-out infinite;
         pointer-events: none;
         z-index: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        opacity: 0.025;
-        user-select: none;
-        white-space: nowrap;
-        transition: all 0.5s ease;
       }
 
-      .watermark-logo {
-        width: 35vw;
-        height: 35vw;
-        color: var(--hud-cyan);
-        filter: blur(4px);
+      @keyframes pulse-bg {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.1); }
       }
+      
+      /* Scanline Effect */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+        background-size: 100% 3px, 3px 100%;
+        pointer-events: none;
+        z-index: 1000;
+        opacity: 0.2;
+      }
+
+      /* Remove redundant watermark from index.html as it's handled in App.tsx */
+      .app-watermark { display: none; }
 
       .watermark-text {
         font-size: 12vw;
-        font-weight: 100;
-        letter-spacing: 4vw;
-        color: var(--hud-cyan);
+        font-weight: 900;
+        letter-spacing: 3vw;
+        color: var(--cyan);
         text-transform: uppercase;
-        margin-top: -2vw;
-        filter: blur(1px);
-        font-family: 'Inter', sans-serif;
+        filter: blur(8px);
       }
 
-      /* HUD Panel with Bracket Corners */
+      /* Neural HUD Panel */
       .hud-panel {
-        background: rgba(0, 242, 255, 0.015);
-        backdrop-filter: blur(16px);
-        border: 1px solid var(--hud-border);
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--cyan-border);
+        border-radius: 4px;
         position: relative;
-        box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
-        z-index: 10;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.02);
       }
 
+      /* Technical Corner Accents */
       .hud-panel::before, .hud-panel::after {
         content: "";
         position: absolute;
-        width: 15px;
-        height: 15px;
-        border: 2px solid var(--hud-cyan);
-      }
-      .hud-panel::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-      .hud-panel::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-
-      .kimoyo-orb {
-        width: 52px;
-        height: 52px;
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid var(--hud-border);
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        width: 10px;
+        height: 10px;
+        border-color: var(--cyan);
+        border-style: solid;
+        pointer-events: none;
+        opacity: 0.5;
       }
 
-      .kimoyo-orb:hover {
-        background: var(--hud-cyan-dim);
-        border-color: var(--hud-cyan);
-        box-shadow: 0 0 15px var(--hud-cyan-dim);
+      .hud-panel::before {
+        top: -1px;
+        left: -1px;
+        border-width: 2px 0 0 2px;
       }
 
-      .kimoyo-orb.active {
-        background: var(--hud-cyan);
-        box-shadow: 0 0 25px var(--hud-cyan);
-      }
-      
-      .kimoyo-orb.active svg {
-        color: black !important;
+      .hud-panel::after {
+        bottom: -1px;
+        right: -1px;
+        border-width: 0 2px 2px 0;
       }
 
       .cyan-text {
-        color: var(--hud-cyan);
-        text-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+        color: var(--cyan);
+        text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+        letter-spacing: 0.05em;
       }
 
-      .mono-data { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: #64748b; }
-
-      /* Scanning Line Animation */
-      .scanline {
-        position: absolute;
-        width: 100%;
-        height: 100px;
-        background: linear-gradient(to bottom, transparent, rgba(0, 242, 255, 0.05), transparent);
-        animation: scan 8s linear infinite;
-        pointer-events: none;
-        z-index: 20;
+      .mono-data { 
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace; 
+        font-size: 0.65rem; 
+        color: #64748b; 
+        letter-spacing: -0.02em;
       }
 
-      @keyframes scan {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(1000%); }
+      @keyframes flicker {
+        0% { opacity: 0.97; }
+        5% { opacity: 0.95; }
+        10% { opacity: 0.9; }
+        15% { opacity: 0.95; }
+        20% { opacity: 0.98; }
+        25% { opacity: 0.95; }
+        30% { opacity: 0.9; }
+        35% { opacity: 0.95; }
+        40% { opacity: 0.98; }
+        45% { opacity: 0.95; }
+        50% { opacity: 0.9; }
+        55% { opacity: 0.95; }
+        60% { opacity: 0.98; }
+        65% { opacity: 0.95; }
+        70% { opacity: 0.9; }
+        75% { opacity: 0.95; }
+        80% { opacity: 0.98; }
+        85% { opacity: 0.95; }
+        90% { opacity: 0.9; }
+        95% { opacity: 0.95; }
+        100% { opacity: 0.98; }
       }
 
-      .animate-spin-slow {
-        animation: spin 180s linear infinite;
+      .hud-panel {
+        animation: flicker 10s infinite;
       }
 
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
+      ::-webkit-scrollbar { width: 2px; height: 2px; }
+      ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 0; }
+      ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
 
-      ::-webkit-scrollbar { width: 4px; height: 4px; }
-      ::-webkit-scrollbar-thumb { background: var(--hud-cyan); border-radius: 10px; }
-      ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-
-      .glitch-hover:hover {
-        animation: glitch 0.2s infinite;
-      }
-
-      @keyframes glitch {
-        0% { transform: translate(0); }
-        20% { transform: translate(-2px, 1px); }
-        40% { transform: translate(-2px, -1px); }
-        60% { transform: translate(2px, 1px); }
-        80% { transform: translate(2px, -1px); }
-        100% { transform: translate(0); }
-      }
     </style>
-    <script type="importmap">
-    {
-      "imports": {
-        "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
-        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-        "react": "https://esm.sh/react@^19.2.4",
-        "react/": "https://esm.sh/react@^19.2.4/",
-        "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
-      }
-    }
-    </script>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

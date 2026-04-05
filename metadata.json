@@ -1,8 +1,9 @@
 {
   "name": "Synapse: Neural Market Intelligence v2.0",
-  "description": "An elite-tier neural discovery engine, now evolved with AJA v2.0, a high-resilience video synthesis stack, and a persistent Neural Asset Library maintained by the Library Assistant AI Agent.",
+  "description": "An elite-tier neural discovery engine, now evolved with AJA v2.0, Gemini 3.1 Live, and a full PWA-compliant interface for high-resilience market intelligence.",
   "requestFramePermissions": [
     "geolocation",
-    "microphone"
+    "microphone",
+    "camera"
   ]
 }

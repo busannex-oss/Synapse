@@ -1,0 +1,66 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user profile information and dashboard preferences.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique identifier for the user." },
+        "displayName": { "type": "string", "description": "User's display name." },
+        "email": { "type": "string", "description": "User's email address." },
+        "photoURL": { "type": "string", "description": "URL to user's profile picture." },
+        "preferences": {
+          "type": "object",
+          "properties": {
+            "theme": { "type": "string", "enum": ["dark", "light", "neural"], "description": "UI theme preference." },
+            "notificationsEnabled": { "type": "boolean", "description": "Whether notifications are enabled." }
+          }
+        },
+        "dashboardLayout": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string", "description": "Module identifier." },
+              "order": { "type": "integer", "description": "Display order." },
+              "priority": { "type": "string", "enum": ["high", "medium", "low"], "description": "Importance level." },
+              "visible": { "type": "boolean", "description": "Whether the module is shown." }
+            }
+          }
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "Lead": {
+      "title": "Lead Record",
+      "description": "Stores lead information, pipeline status, and financial metrics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "company": { "type": "string" },
+        "queue": { "type": "string" },
+        "status": { "type": "string" },
+        "readinessScore": { "type": "number" },
+        "revenuePerLead": { "type": "number" },
+        "fulfillmentOutcome": { "type": "string" },
+        "completedAt": { "type": "string" },
+        "isProcessing": { "type": "boolean" },
+        "ownerUid": { "type": "string" }
+      },
+      "required": ["id", "name", "queue", "ownerUid"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user profiles and their specific dashboard configurations."
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Global collection of leads, secured by ownerUid."
+    }
+  }
+}
